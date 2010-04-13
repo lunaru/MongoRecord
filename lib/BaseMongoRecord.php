@@ -158,6 +158,9 @@ abstract class BaseMongoRecord
 
 		if (self::$connection == null)
 			throw new Exception("BaseMongoRecord::connection must be initialized to a valid Mongo object");
+		
+		if (!self::$connection->connected)
+			self::$connection->connect();
 
 		return self::$connection->selectCollection(self::$database, $collection_name);
 	}
