@@ -155,7 +155,7 @@ abstract class BaseMongoRecord
 	
 		foreach ($methods as $method)
 		{
-			if (substr($method, 0, 9))
+			if (substr($method, 0, 9) == 'validates')
 			{
 				$propertyCall = 'get' . substr($method, 9);
 				if (!$className::$method($this->$propertyCall()))
