@@ -34,7 +34,7 @@ abstract class BaseMongoRecord
 	public function save()
 	{
 		if (!$this->validate())
-			return;
+			return false;
 
 		$this->beforeSave();
 
@@ -42,8 +42,9 @@ abstract class BaseMongoRecord
 		$collection->save($this->attributes);
 
 		$this->new = false;
-
 		$this->afterSave();
+
+		return true;
 	}
 
 	public function destroy()
@@ -129,6 +130,7 @@ abstract class BaseMongoRecord
 		if ($prefix == "set" && isset($arguments[0]))
 		{
 			$this->attributes[$property] = $arguments[0];
+			return $this;
 		}
 		else
 		{
@@ -144,7 +146,27 @@ abstract class BaseMongoRecord
 	public function afterValidation() {}
 	public function beforeDestroy() {}
 	public function afterNew() {}
-	public function isValid() { return true; }
+
+
+	protected function isValid() 
+	{
+		$className = get_called_class();
+		$methods = get_class_methods($className);
+	
+		foreach ($methods as $method)
+		{
+			if (substr($method, 0, 9))
+			{
+				$propertyCall = 'get' . substr($method, 9);
+				if (!$className::$method($this->$propertyCall()))
+				{
+					return false;
+				}
+			}
+		}
+
+		return true; 
+	}
 
 	// core conventions
 	protected static function getCollection()
