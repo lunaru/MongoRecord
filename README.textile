@@ -2,7 +2,7 @@ h1. MongoRecord
 
 MongoRecord is a PHP Mongo ORM layer built on top of the PHP "Mongo PECL extension":http://pecl.php.net/package/mongo 
 
-MongoRecord is an extraction from online classifieds site Oodle:http://www.oodle.com. Oodle's requirements for a manageable, easy to understand interface for dealing with the super-scalable Mongo datastore was the primary reason for MongoRecord. It was developed to use with PHP applications looking to add Mongo's scaling capabilities while dealing with a nice abstraction layer.
+MongoRecord is an extraction from online classifieds site "Oodle":http://www.oodle.com. Oodle's requirements for a manageable, easy to understand interface for dealing with the super-scalable Mongo datastore was the primary reason for MongoRecord. It was developed to use with PHP applications looking to add Mongo's scaling capabilities while dealing with a nice abstraction layer.
 
 h2. Features
 
