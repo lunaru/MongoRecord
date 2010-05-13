@@ -1,0 +1,112 @@
+h1. MongoRecord
+
+MongoRecord is a PHP Mongo ORM layer built on top of the PHP "Mongo PECL extension":http://pecl.php.net/package/mongo 
+
+h2. Features
+
+* Collection names by convention
+* Attributes by convention
+* Validations
+* Callbacks
+
+h2. Requirements
+
+* PHP 5.3+
+* Mongo PECL
+
+h2. Installation
+
+Extract the source files into a directory in your PHP library path.
+
+h2. Usage
+
+h3. Basic
+
+Using MongoRecord is as simple as declaring classes that are extensions of the base ORM class.
+
+pre.. 
+class Person extends BaseMongoRecord
+{
+}
+
+// initialize connection and database name
+BaseMongoRecord::$connection = new Mongo();
+BaseMongoRecord::$database = 'myapp';
+
+p. 
+This gives @Person@ basic CRUD methods: @save()@, @destroy()@, @findOne()@, and @find()@.
+
+Every class automatically gets mapped to a Mongo collection by convention.
+
+E.g.
+@Person@ -> @people@
+@MyClass@ -> @my_classes@
+
+h3. Creating and Fetching
+
+New records can be created by instantiating and saving:
+
+pre.. 
+$person = new Person();
+$person->save(); // true or false depending on success
+
+$person = Person::findOne();
+$person->destroy();
+
+h3. Attributes
+
+Attributes can be set in bulk on the constructor, one-by-one, or chained.
+
+pre.. 
+$person = new Person(array('name' => 'Bob', 'description' => 'foobar'));
+$person->setAge(25)->setGender("Male");
+$person->save(); // returns true or false
+
+Person::find(array('name' => 'Bob', 'gender' => 'Male')); // finds all male Bobs in the people collection.
+
+h3. Validations
+
+Validations can be added based on the name of the attribute
+
+pre.. 
+
+class Person extends BaseMongoRecord
+{
+    public function validatesName($name)
+    {
+        if ($name == 'Bob')
+            return false;
+        else
+            return true;
+    }
+}
+
+$person = new Person();
+$person->setName("Bob");
+$person->save(); // fails!
+
+h3. Callbacks
+
+Callbacks can be added for the following events:
+
+* beforeSave()
+* afterSave()
+* beforeValidation()
+* afterValidation()
+* beforeDestroy()
+* afterNew()
+
+In a new, save, destroy cycle, the validations are called in the following order:
+
+@afterNew -> beforeValidation -> afterValidation -> beforeSave -> afterSave -> beforeDestroy@
+
+pre.. 
+class Person extends BaseMongoRecord
+{
+    public function beforeSave()
+    {
+         if ($this->getName() == 'Bob')
+             $this->setName('Bill');
+    }
+}
+
