@@ -121,11 +121,11 @@ class Inflector {
 	 * * @return object
 	 * * @access public
 	 * */
-	function &getInstance() {
+	static function getInstance() {
 		static $instance = array();
 
 		if (!$instance) {
-			$instance[0] =& new Inflector();
+			$instance[0] = new Inflector();
 			/*if (file_exists(CONFIGS.'inflections.php')) {
 				include(CONFIGS.'inflections.php');
 				$instance[0]->__pluralRules = $pluralRules;
