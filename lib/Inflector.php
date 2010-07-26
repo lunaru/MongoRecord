@@ -234,7 +234,7 @@ class Inflector {
 	 * * @link http://book.cakephp.org/view/572/Class-methods
 	 * */
 	function pluralize($word) {
-		$_this =& Inflector::getInstance();
+		$_this = self::getInstance();
 		if (!isset($_this->pluralRules) || empty($_this->pluralRules)) {
 			$_this->__initPluralRules();
 		}
@@ -379,7 +379,7 @@ class Inflector {
 	 * * @link http://book.cakephp.org/view/572/Class-methods
 	 * */
 	function singularize($word) {
-		$_this =& Inflector::getInstance();
+		$_this = self::getInstance();
 		if (!isset($_this->singularRules) || empty($_this->singularRules)) {
 			$_this->__initSingularRules();
 		}
