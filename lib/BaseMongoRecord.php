@@ -117,7 +117,7 @@ abstract class BaseMongoRecord
 		}
 
 		// Get
-		if ($prefix == "get" && isset($this->attributes[$property]))
+		if ($prefix == "get" && array_key_exists($property, $this->attributes))
 		{
 			return $this->attributes[$property];
 		}
@@ -127,7 +127,7 @@ abstract class BaseMongoRecord
 		}
 
 		// Set
-		if ($prefix == "set" && isset($arguments[0]))
+		if ($prefix == "set" && array_key_exists(0, $arguments))
 		{
 			$this->attributes[$property] = $arguments[0];
 			return $this;
