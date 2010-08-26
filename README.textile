@@ -56,6 +56,7 @@ $person->save(); // true or false depending on success
 $person = Person::findOne();
 $person->destroy();
 
+p.
 You can also add options to how you want to find.
 
 pre..
