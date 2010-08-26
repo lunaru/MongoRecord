@@ -10,6 +10,7 @@ h2. Features
 * Attributes by convention
 * Validations
 * Callbacks
+* Sorting, offsets, limits
 
 h2. Requirements
 
@@ -54,6 +55,12 @@ $person->save(); // true or false depending on success
 
 $person = Person::findOne();
 $person->destroy();
+
+You can also add options to how you want to find.
+
+pre..
+// find the first People sorted by name, starting from the tenth
+Person::find(array(), array('sort' => array('name' => 1), 'offset' => 10, 'limit' => 1));
 
 h3. Attributes
 
