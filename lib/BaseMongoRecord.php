@@ -58,12 +58,22 @@ abstract class BaseMongoRecord
 		}
 	}
 
-	public static function find($query = array())
+	public static function find($query = array(), $options = array())
 	{
 		$collection = self::getCollection();
 		$documents = $collection->find($query);
 
+		if (isset($options['sort']))
+			$documents->sort($options['sort']);
+		
+		if (isset($options['offset']))
+			$documents->skip($options['offset']);
+
+		if (isset($options['limit']))
+			$documents->limit($options['limit']);
+
 		$ret = array();
+		
 		while ($documents->hasNext())
 		{
 			$document = $documents->getNext();
@@ -73,11 +83,18 @@ abstract class BaseMongoRecord
 		return $ret;
 	}
 
-	public static function findOne($query = array())
+	public static function findOne($query = array(), $options = array())
+	{
+		$options['limit'] = 1;
+		return find($query, $options);
+	}
+
+	public static function count($query = array())
 	{
 		$collection = self::getCollection();
-		$document = $collection->findOne($query);
-		return self::instantiate($document);
+		$documents = $collection->count($query);
+
+		return $documents;
 	}
 
 	private static function instantiate($document)
