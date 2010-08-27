@@ -86,7 +86,7 @@ abstract class BaseMongoRecord
 	public static function findOne($query = array(), $options = array())
 	{
 		$options['limit'] = 1;
-		return find($query, $options);
+		return self::find($query, $options);
 	}
 
 	public static function count($query = array())
