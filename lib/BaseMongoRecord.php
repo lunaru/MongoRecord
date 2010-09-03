@@ -90,7 +90,7 @@ abstract class BaseMongoRecord
 		$results = self::find($query, $options);
 		
 		if ($results)
-			return current(self::find($query, $options));
+			return current($results);
 		else
 			return null;
 	}
