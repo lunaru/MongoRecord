@@ -198,16 +198,16 @@ abstract class BaseMongoRecord
 		$inflector = Inflector::getInstance();
 		$collection_name = $inflector->tableize($className);
 
-		if (self::$database == null)
+		if ($className::$database == null)
 			throw new Exception("BaseMongoRecord::database must be initialized to a proper database string");
 
-		if (self::$connection == null)
+		if ($className::$connection == null)
 			throw new Exception("BaseMongoRecord::connection must be initialized to a valid Mongo object");
 		
-		if (!self::$connection->connected)
-			self::$connection->connect();
+		if (!$className::$connection->connected)
+			$className::$connection->connect();
 
-		return self::$connection->selectCollection(self::$database, $collection_name);
+		return $className::$connection->selectCollection($className::$database, $collection_name);
 	}
 }
 
