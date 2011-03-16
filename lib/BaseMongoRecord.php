@@ -12,6 +12,7 @@ abstract class BaseMongoRecord
 
 	public static $database = null;
 	public static $connection = null;
+	public static $findTimeout = 20000;
 
 	public function __construct($attributes = array(), $new = true)
 	{
@@ -62,6 +63,7 @@ abstract class BaseMongoRecord
 	{
 		$collection = self::getCollection();
 		$documents = $collection->find($query);
+		$className = get_called_class();
 
 		if (isset($options['sort']))
 			$documents->sort($options['sort']);
@@ -73,7 +75,9 @@ abstract class BaseMongoRecord
 			$documents->limit($options['limit']);
 
 		$ret = array();
-		
+
+		$documents->timeout($className::$findTimeout);	
+	
 		while ($documents->hasNext())
 		{
 			$document = $documents->getNext();
@@ -204,10 +208,16 @@ abstract class BaseMongoRecord
 		if ($className::$connection == null)
 			throw new Exception("BaseMongoRecord::connection must be initialized to a valid Mongo object");
 		
-		if (!$className::$connection->connected)
+		if (!($className::$connection->connected))
 			$className::$connection->connect();
 
 		return $className::$connection->selectCollection($className::$database, $collection_name);
+	}
+
+	public static function setFindTimeout($timeout)
+	{
+		$className = get_called_class();
+		$className::$findTimeout = $timeout;
 	}
 }
 
