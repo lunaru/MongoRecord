@@ -124,6 +124,11 @@ abstract class BaseMongoRecord
 	{
 		return $this->attributes['_id'];
 	}
+
+	public function setID($id)
+	{
+		$this->attributes['_id'] = $id;
+	}
 		
 	public function __call($method, $arguments)
 	{
