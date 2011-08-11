@@ -227,17 +227,17 @@ abstract class BaseMongoRecord
 	
 	public static function ensureIndex(array $keys, array $options = array())
 	{
-	  return self::getCollection()->ensureIndex($keys, $options);
+		return self::getCollection()->ensureIndex($keys, $options);
 	}
 	
 	public static function deleteIndex($keys)
 	{
-	  return self::getCollection()->deleteIndex($keys);
+		return self::getCollection()->deleteIndex($keys);
 	}
 	
 	public function getAttributes()
 	{
-	  return $this->attributes;
+		return $this->attributes;
 	}
 }
 
