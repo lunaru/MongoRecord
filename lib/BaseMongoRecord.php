@@ -113,9 +113,9 @@ abstract class BaseMongoRecord
 		$options['limit'] = 1;
 
 		$results = self::find($query, $options);
-		
+
 		if ($results)
-			return current($results);
+			return $results->current();
 		else
 			return null;
 	}
