@@ -1,6 +1,7 @@
 <?php
 
 require_once('MongoRecord.php');
+require_once('MongoRecordIterator.php');
 require_once('Inflector.php');
 
 abstract class BaseMongoRecord
@@ -59,7 +60,7 @@ abstract class BaseMongoRecord
 		}
 	}
 
-	public static function find($query = array(), $options = array())
+	public static function findAll($query = array(), $options = array())
 	{
 		$collection = self::getCollection();
 		$documents = $collection->find($query);
@@ -85,6 +86,26 @@ abstract class BaseMongoRecord
 		}
 		
 		return $ret;
+	}
+	
+	public static function find($query = array(), $options = array())
+	{
+		$collection = self::getCollection();
+		$documents = $collection->find($query);
+		$className = get_called_class();
+
+		if (isset($options['sort']))
+			$documents->sort($options['sort']);
+		
+		if (isset($options['offset']))
+			$documents->skip($options['offset']);
+
+		if (isset($options['limit']))
+			$documents->limit($options['limit']);
+
+		$documents->timeout($className::$findTimeout);	
+
+		return new MongoRecordIterator($documents, $className);
 	}
 
 	public static function findOne($query = array(), $options = array())
