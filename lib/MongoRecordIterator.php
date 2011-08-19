@@ -7,7 +7,7 @@ class MongoRecordIterator
 	protected $cursor;
 	protected $className;
   
-	public function __construct(MongoCursor $cursor, $className)
+	public function __construct($cursor, $className)
 	{
 		$this->cursor = $cursor;
 		$this->className = $className;
