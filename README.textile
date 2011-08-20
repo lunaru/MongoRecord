@@ -126,3 +126,6 @@ In 2.x the @find()@ method is lazy and returns a @MongoRecordIterator@ instead o
 
 Because of this, 2.x is *not* backwards compatible with 1.x, since the result of @find()@ is not guaranteed to behave the same. (e.g. @$results[3] does not work with @find()@ in 2.x.) You may use @findAll()@ instead, which exhibits the same behavior as @find()@ in 1.x.
 
+h3. Credits
+
+Thanks to Rasmus for the suggestion for lazy find().
