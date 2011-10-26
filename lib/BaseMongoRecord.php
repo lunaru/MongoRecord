@@ -33,7 +33,7 @@ abstract class BaseMongoRecord
 		return $retval;
 	}
 
-	public function save()
+	public function save(array $options = array())
 	{
 		if (!$this->validate())
 			return false;
@@ -41,7 +41,7 @@ abstract class BaseMongoRecord
 		$this->beforeSave();
 
 		$collection = self::getCollection();
-		$collection->save($this->attributes);
+		$collection->save($this->attributes, $options);
 
 		$this->new = false;
 		$this->afterSave();
@@ -68,7 +68,7 @@ abstract class BaseMongoRecord
 
 		if (isset($options['sort']))
 			$documents->sort($options['sort']);
-		
+
 		if (isset($options['offset']))
 			$documents->skip($options['offset']);
 
@@ -77,17 +77,17 @@ abstract class BaseMongoRecord
 
 		$ret = array();
 
-		$documents->timeout($className::$findTimeout);	
-	
+		$documents->timeout($className::$findTimeout);
+
 		while ($documents->hasNext())
 		{
 			$document = $documents->getNext();
 			$ret[] = self::instantiate($document);
 		}
-		
+
 		return $ret;
 	}
-	
+
 	public static function find($query = array(), $options = array())
 	{
 		$collection = self::getCollection();
@@ -96,14 +96,14 @@ abstract class BaseMongoRecord
 
 		if (isset($options['sort']))
 			$documents->sort($options['sort']);
-		
+
 		if (isset($options['offset']))
 			$documents->skip($options['offset']);
 
 		if (isset($options['limit']))
 			$documents->limit($options['limit']);
 
-		$documents->timeout($className::$findTimeout);	
+		$documents->timeout($className::$findTimeout);
 
 		return new MongoRecordIterator($documents, $className);
 	}
@@ -150,7 +150,7 @@ abstract class BaseMongoRecord
 	{
 		$this->attributes['_id'] = $id;
 	}
-		
+
 	public function __call($method, $arguments)
 	{
 		// Is this a get or a set
@@ -201,11 +201,11 @@ abstract class BaseMongoRecord
 	public function afterNew() {}
 
 
-	protected function isValid() 
+	protected function isValid()
 	{
 		$className = get_called_class();
 		$methods = get_class_methods($className);
-	
+
 		foreach ($methods as $method)
 		{
 			if (substr($method, 0, 9) == 'validates')
@@ -218,7 +218,7 @@ abstract class BaseMongoRecord
 			}
 		}
 
-		return true; 
+		return true;
 	}
 
 	// core conventions
@@ -233,7 +233,7 @@ abstract class BaseMongoRecord
 
 		if ($className::$connection == null)
 			throw new Exception("BaseMongoRecord::connection must be initialized to a valid Mongo object");
-		
+
 		if (!($className::$connection->connected))
 			$className::$connection->connect();
 
@@ -245,17 +245,17 @@ abstract class BaseMongoRecord
 		$className = get_called_class();
 		$className::$findTimeout = $timeout;
 	}
-	
+
 	public static function ensureIndex(array $keys, array $options = array())
 	{
 		return self::getCollection()->ensureIndex($keys, $options);
 	}
-	
+
 	public static function deleteIndex($keys)
 	{
 		return self::getCollection()->deleteIndex($keys);
 	}
-	
+
 	public function getAttributes()
 	{
 		return $this->attributes;
