@@ -120,6 +120,26 @@ abstract class BaseMongoRecord
 			return null;
 	}
 
+	public static function findMax($col)
+	{
+		$options = array('sort' => array($col => -1), 'limit' => 1);
+
+		$results = self::find(array(), $options);
+
+		if ($results){
+			$r = $results->current();
+			if($r){
+				$at = $r->getAttributes();
+				return $at[$col];
+			}else{
+				return 0;
+			}
+			return ;
+		}else{
+			return null;
+		}
+	}
+
 	public static function count($query = array())
 	{
 		$collection = self::getCollection();
