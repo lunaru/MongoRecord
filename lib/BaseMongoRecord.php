@@ -15,6 +15,14 @@ abstract class BaseMongoRecord
 	public static $connection = null;
 	public static $findTimeout = 20000;
 
+	/**
+	 * Collection name will be generated automaticaly if setted to null.
+	 * If overridden in child class, then new collection name uses. 
+	 * 
+	 * @var string
+	 */
+	protected static $collectionName = null;
+
 	public function __construct($attributes = array(), $new = true)
 	{
 		$this->new = $new;
@@ -224,9 +232,17 @@ abstract class BaseMongoRecord
 	// core conventions
 	protected static function getCollection()
 	{
-		$className = get_called_class();
-		$inflector = Inflector::getInstance();
-		$collection_name = $inflector->tableize($className);
+	    $className = get_called_class();
+
+		if (null !== static::$collectionName)
+		{
+		    $collectionName = static::$collectionName;
+		}
+		else
+		{
+    		$inflector = Inflector::getInstance();
+    		$collectionName = $inflector->tableize($className);
+		}
 
 		if ($className::$database == null)
 			throw new Exception("BaseMongoRecord::database must be initialized to a proper database string");
@@ -237,7 +253,7 @@ abstract class BaseMongoRecord
 		if (!($className::$connection->connected))
 			$className::$connection->connect();
 
-		return $className::$connection->selectCollection($className::$database, $collection_name);
+		return $className::$connection->selectCollection($className::$database, $collectionName);
 	}
 
 	public static function setFindTimeout($timeout)

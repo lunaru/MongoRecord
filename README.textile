@@ -45,6 +45,15 @@ E.g.
 @Person@ -> @people@
 @MyClass@ -> @my_classes@
 
+It is possible to set collection name manualy for child class.
+You can do it by overriding class name as in example.
+
+pre.. 
+class PersonClassNameIsTooComplicated extends BaseMongoRecord
+{
+    protected static $collectionName = 'person';
+}
+
 h3. Creating and Fetching
 
 New records can be created by instantiating and saving:
