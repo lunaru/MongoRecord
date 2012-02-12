@@ -48,7 +48,7 @@ E.g.
 It is possible to set collection name manualy for child class.
 You can do it by overriding class name as in example.
 
-pre..
+pre.. 
 class PersonClassNameIsTooComplicated extends BaseMongoRecord
 {
     protected static $collectionName = 'person';
