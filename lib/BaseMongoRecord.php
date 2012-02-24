@@ -232,16 +232,16 @@ abstract class BaseMongoRecord
 	// core conventions
 	protected static function getCollection()
 	{
-	    $className = get_called_class();
+		$className = get_called_class();
 
 		if (null !== static::$collectionName)
 		{
-		    $collectionName = static::$collectionName;
+			$collectionName = static::$collectionName;
 		}
 		else
 		{
-    		$inflector = Inflector::getInstance();
-    		$collectionName = $inflector->tableize($className);
+			$inflector = Inflector::getInstance();
+			$collectionName = $inflector->tableize($className);
 		}
 
 		if ($className::$database == null)
