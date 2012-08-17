@@ -71,7 +71,7 @@ abstract class BaseMongoRecord
 	public static function findAll($query = array(), $options = array())
 	{
 		$collection = self::getCollection();
-		$documents = $collection->find($query);
+		$documents = $collection->find($query, $options);
 		$className = get_called_class();
 
 		if (isset($options['sort']))
@@ -99,7 +99,7 @@ abstract class BaseMongoRecord
 	public static function find($query = array(), $options = array())
 	{
 		$collection = self::getCollection();
-		$documents = $collection->find($query);
+		$documents = $collection->find($query, $options);
 		$className = get_called_class();
 
 		if (isset($options['sort']))
