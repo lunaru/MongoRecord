@@ -67,11 +67,17 @@ abstract class BaseMongoRecord
 			$collection->remove(array('_id' => $this->attributes['_id']));
 		}
 	}
-
-	public static function findAll($query = array(), $options = array())
-	{
+        private static function _find($query = array(), $options = array()){
+            
 		$collection = self::getCollection();
-		$documents = $collection->find($query, $options);
+                if (isset($options['fields'])){
+                    $documents = $collection->find($query, $options['fields']);
+                }
+                else{
+                    $documents = $collection->find($query);
+                }
+                
+
 		$className = get_called_class();
 
 		if (isset($options['sort']))
@@ -83,10 +89,14 @@ abstract class BaseMongoRecord
 		if (isset($options['limit']))
 			$documents->limit($options['limit']);
 
-		$ret = array();
-
+	
 		$documents->timeout($className::$findTimeout);
-
+                return $documents;
+        }
+	public static function findAll($query = array(), $options = array())
+	{
+                $documents = static::_find($query, $options);
+                $ret = array();
 		while ($documents->hasNext())
 		{
 			$document = $documents->getNext();
@@ -98,21 +108,8 @@ abstract class BaseMongoRecord
 
 	public static function find($query = array(), $options = array())
 	{
-		$collection = self::getCollection();
-		$documents = $collection->find($query, $options);
-		$className = get_called_class();
-
-		if (isset($options['sort']))
-			$documents->sort($options['sort']);
-
-		if (isset($options['offset']))
-			$documents->skip($options['offset']);
-
-		if (isset($options['limit']))
-			$documents->limit($options['limit']);
-
-		$documents->timeout($className::$findTimeout);
-
+		$documents = static::_find($query, $options);
+                $className = get_called_class();
 		return new MongoRecordIterator($documents, $className);
 	}
 
@@ -277,4 +274,3 @@ abstract class BaseMongoRecord
 		return $this->attributes;
 	}
 }
-
