@@ -125,7 +125,6 @@ implements MongoRecord
   public static function find($query = array(), $options = array())
   {
     $documents = static::_find($query, $options);
-    var_dump($documents);
     $className = get_called_class();
     return new MongoRecordIterator($documents, $className);
   }
@@ -338,7 +337,6 @@ implements MongoRecord
   {
     $numcls = func_num_args();
     $cls_list = func_get_args();
-    var_dump($cls_list);
     $inflector = Inflector::getInstance();
     $self=$this;
     foreach($cls_list as $clsname)
