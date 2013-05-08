@@ -112,6 +112,7 @@ h3. Relations
 Relations can be set to support %{color:blue} belong_to,has_many,has_one,% see below sample:
 
 pre..
+
 class Student extends BaseMongoRecord
 {
   protected $belong_to=array('School');
@@ -165,7 +166,7 @@ foreach($students as $stu)
 $student->setSchool($school)->save();
 
 var_dump($student->getSchool()->getName());//=>'fooschool'
-@
+
 
 h3. Callbacks
 
