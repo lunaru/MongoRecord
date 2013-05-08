@@ -107,10 +107,11 @@ $person = new Person();
 $person->setName("Bob");
 $person->save(); // fails!
 
-h3 Relations
+h3. Relations
 
 Relations can be set to support %{color:blue} belong_to,has_many,has_one,% see below sample:
-@
+
+pre..
 class Student extends BaseMongoRecord
 {
   protected $belong_to=array('School');
