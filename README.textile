@@ -3,7 +3,7 @@ h1. MongoRecord
 MongoRecord is a PHP Mongo ORM layer built on top of the PHP "Mongo PECL extension":http://pecl.php.net/package/mongo 
 
 MongoRecord is an extraction from online classifieds site "Oodle":http://www.oodle.com. Oodle's requirements for a manageable, easy to understand interface for dealing with the super-scalable Mongo datastore was the primary reason for MongoRecord. It was developed to use with PHP applications looking to add Mongo's scaling capabilities while dealing with a nice abstraction layer.
-%{color:red}*This branch is folked from lunaru/MongoRecord(https://github.com/lunaru/MongoRecord), and add relation features(has_many,has_one,belong_to)*%
+*This branch is folked from lunaru/MongoRecord(https://github.com/lunaru/MongoRecord), and add relation features(has_many,has_one,belong_to)*
 
 
 h2. Features
@@ -109,10 +109,9 @@ $person->save(); // fails!
 
 h3. Relations
 
-Relations can be set to support %{color:blue} belong_to,has_many,has_one,% see below sample:
+Relations can be set to support belong_to,has_many,has_one, see below sample:
 
-pre..
-
+pre.. 
 class Student extends BaseMongoRecord
 {
   protected $belong_to=array('School');
@@ -122,8 +121,6 @@ class Student extends BaseMongoRecord
       $this->getSchool();//return school
       $this->setSchool($school);//return $this
     */
-
-
 }
 
 class School extends BaseMongoRecord
@@ -139,9 +136,9 @@ class School extends BaseMongoRecord
        $this->removeStudent($stu);//parm is student instant,return $this
     */
 }
+
 $school=new School();
 $school->setName('fooschool');
-
 $school->createStudent()->setName("foostu1")->save();
 $school->createStudent()->setName("foostu2")->save();
 $school->save();
@@ -150,21 +147,21 @@ $students=$school->getStudents();//=>MongoRecordIterator
 var_dump($students->count());//=>2
 foreach($students as $student)
   {
-    var_dump($student);
+    var_dump($student);//=>foostu1,foostu2 
   }
 
 $student=new Student();
 $student->setName('foostu3')->save();
 $school->addStudent($student);
 $students=$school->getStudents();//=>MongoRecordIterator
+
 var_dump($students->count());//=>3
 foreach($students as $stu)
   {
-    var_dump($stu);
+    var_dump($stu);//=>foostu1,foostu2,foostu3
   }
 
 $student->setSchool($school)->save();
-
 var_dump($student->getSchool()->getName());//=>'fooschool'
 
 
