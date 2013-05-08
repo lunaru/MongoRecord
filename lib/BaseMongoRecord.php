@@ -36,8 +36,6 @@ implements MongoRecord
 
     if(isset($this->has_many)&&gettype($this->has_many)=="array")
       {
-        echo("=============================hasmany=====================================");
-        var_dump($this->has_many);
         call_user_func_array(array($this,"has_many"),$this->has_many);
       } 
     if(isset($this->has_one)&&gettype($this->has_one)=="array")
@@ -454,11 +452,7 @@ implements MongoRecord
         $this->addfunc($funcname,
                        function() use($funcname,$clsname,$self){
                          $getx="{$funcname}Id";
-                         echo("=============================id=====================================");
-                         echo $self->$getx();
                          $result= $clsname::findOne(array('_id'=>$self->$getx()));
-                         echo $result->getName();  
-                         var_dump($result);
                          return $result;
                        });                       
 
