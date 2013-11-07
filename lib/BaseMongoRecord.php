@@ -25,6 +25,10 @@ abstract class BaseMongoRecord
 
 	public function __construct($attributes = array(), $new = true)
 	{
+	    if(isset($attributes['id']) AND !isset($attributes['_id'])) {
+	        $attributes['_id'] = $attributes['id'];
+	        unset($attributes['id']);
+	    }
 		$this->new = $new;
 		$this->attributes = $attributes;
 		$this->errors = array();
@@ -154,6 +158,7 @@ abstract class BaseMongoRecord
 	public function setID($id)
 	{
 		$this->attributes['_id'] = $id;
+		return $this;
 	}
 
 	public function __call($method, $arguments)
