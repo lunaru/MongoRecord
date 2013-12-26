@@ -1,1 +1,1 @@
-It's just a fork of <a href="https://github.com/lunaru/MongoRecord">lunaru/MongoRecord</a>
+It's just a fork of [lunaru/MongoRecord](https://github.com/lunaru/MongoRecord) .
