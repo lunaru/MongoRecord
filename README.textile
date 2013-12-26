@@ -1,1 +1,140 @@
-It's just a fork of [lunaru/MongoRecord](https://github.com/lunaru/MongoRecord) .
+h1. MongoRecord
+
+MongoRecord is a PHP Mongo ORM layer built on top of the PHP "Mongo PECL extension":http://pecl.php.net/package/mongo 
+
+MongoRecord is an extraction from online classifieds site "Oodle":http://www.oodle.com. Oodle's requirements for a manageable, easy to understand interface for dealing with the super-scalable Mongo datastore was the primary reason for MongoRecord. It was developed to use with PHP applications looking to add Mongo's scaling capabilities while dealing with a nice abstraction layer.
+
+h2. Features
+
+* Collection names by convention
+* Attributes by convention
+* Validations
+* Callbacks
+* Sorting, offsets, limits
+
+h2. Requirements
+
+* PHP 5.3+
+* Mongo PECL
+
+h2. Installation
+
+Extract the source files into a directory in your PHP library path.
+
+h2. Usage
+
+h3. Basic
+
+Using MongoRecord is as simple as declaring classes that are extensions of the base ORM class.
+
+pre.. 
+class Person extends BaseMongoRecord
+{
+}
+
+// initialize connection and database name
+BaseMongoRecord::$connection = new Mongo();
+BaseMongoRecord::$database = 'myapp';
+
+p. 
+This gives @Person@ basic CRUD methods: @save()@, @destroy()@, @findOne()@, and @find()@.
+
+Every class automatically gets mapped to a Mongo collection by convention.
+
+E.g.
+@Person@ -> @people@
+@MyClass@ -> @my_classes@
+
+It is possible to set collection name manualy for child class.
+You can do it by overriding class name as in example.
+
+pre.. 
+class PersonClassNameIsTooComplicated extends BaseMongoRecord
+{
+    protected static $collectionName = 'person';
+}
+
+h3. Creating and Fetching
+
+New records can be created by instantiating and saving:
+
+pre.. 
+$person = new Person();
+$person->save(); // true or false depending on success
+
+$person = Person::findOne();
+$person->destroy();
+
+p. 
+You can also add options to how you want to find.
+
+pre.. 
+// find the first Person sorted by name, starting from the tenth
+Person::find(array(), array('sort' => array('name' => 1), 'offset' => 10, 'limit' => 1));
+
+h3. Attributes
+
+Attributes can be set in bulk on the constructor, one-by-one, or chained.
+
+pre.. 
+$person = new Person(array('name' => 'Bob', 'description' => 'foobar'));
+$person->setAge(25)->setGender("Male");
+$person->save(); // returns true or false
+
+Person::find(array('name' => 'Bob', 'gender' => 'Male')); // finds all male Bobs in the people collection.
+
+h3. Validations
+
+Validations can be added based on the name of the attribute
+
+pre.. 
+
+class Person extends BaseMongoRecord
+{
+    public function validatesName($name)
+    {
+        if ($name == 'Bob')
+            return false;
+        else
+            return true;
+    }
+}
+
+$person = new Person();
+$person->setName("Bob");
+$person->save(); // fails!
+
+h3. Callbacks
+
+Callbacks can be added for the following events:
+
+* beforeSave()
+* afterSave()
+* beforeValidation()
+* afterValidation()
+* beforeDestroy()
+* afterNew()
+
+In a new, save, destroy cycle, the validations are called in the following order:
+
+@afterNew -> beforeValidation -> afterValidation -> beforeSave -> afterSave -> beforeDestroy@
+
+pre.. 
+class Person extends BaseMongoRecord
+{
+    public function beforeSave()
+    {
+         if ($this->getName() == 'Bob')
+             $this->setName('Bill');
+    }
+}
+
+h3. Differences between MongoRecord 1.x and 2.x
+
+In 2.x the @find()@ method is lazy and returns a @MongoRecordIterator@ instead of a @MongoRecord@. The Iterator can be treated like an @array@ and implements the PHP @Iterator@ and @Countable@ interfaces.
+
+Because of this, 2.x is *not* backwards compatible with 1.x, since the result of @find()@ is not guaranteed to behave the same. (e.g. @$results[3] does not work with @find()@ in 2.x.) You may use @findAll()@ instead, which exhibits the same behavior as @find()@ in 1.x.
+
+h3. Credits
+
+Thanks to Rasmus for the suggestion for lazy find().
