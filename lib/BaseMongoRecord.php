@@ -42,7 +42,9 @@ abstract class BaseMongoRecord
 
 	public function validate()
 	{
+		// validate fields types before running object validation
 		$this->parseFields();
+		
 		$this->beforeValidation();
 		$retval = $this->isValid();
 		$this->afterValidation();
@@ -79,7 +81,7 @@ abstract class BaseMongoRecord
         
 		// validate/cast the query params
 		$query = self::parseQuery($query);
-		
+
 		$collection = self::getCollection();
                 if (isset($options['fields'])){
                     $documents = $collection->find($query, $options['fields']);
