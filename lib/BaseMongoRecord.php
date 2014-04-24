@@ -44,7 +44,7 @@ abstract class BaseMongoRecord
 	{
 		// validate fields types before running object validation
 		$this->parseFields();
-		
+
 		$this->beforeValidation();
 		$retval = $this->isValid();
 		$this->afterValidation();
@@ -157,6 +157,22 @@ abstract class BaseMongoRecord
 		{
 			return null;
 		}
+	}
+
+	public static function remove($query = array(), $options = array())
+	{
+		$query = self::parseQuery($query);
+
+		$col = self::getCollection();
+		$col->remove($query, $options);
+	}
+
+	public static function batchInsert(array $data, $options = array())
+	{
+		self::parseFields($data);
+		
+		self::getCollection()
+			->batchInsert( $data );
 	}
 
 	public function getID()
