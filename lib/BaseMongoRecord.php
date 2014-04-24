@@ -11,6 +11,9 @@ abstract class BaseMongoRecord
 	protected $errors;
 	private $new;
 
+	// document fields definition
+	protected static $fields = array();
+
 	public static $database = null;
 	public static $connection = null;
 	public static $findTimeout = 20000;
@@ -39,6 +42,7 @@ abstract class BaseMongoRecord
 
 	public function validate()
 	{
+		$this->parseFields();
 		$this->beforeValidation();
 		$retval = $this->isValid();
 		$this->afterValidation();
@@ -72,7 +76,10 @@ abstract class BaseMongoRecord
 		}
 	}
         private static function _find($query = array(), $options = array()){
-            
+        
+		// validate/cast the query params
+		$query = self::parseQuery($query);
+		
 		$collection = self::getCollection();
                 if (isset($options['fields'])){
                     $documents = $collection->find($query, $options['fields']);
@@ -278,4 +285,106 @@ abstract class BaseMongoRecord
 	{
 		return $this->attributes;
 	}
+
+
+
+	protected static function parseQuery($query)
+	{
+		$data = array();
+
+		foreach ($query as $field => &$value)
+		{
+			// special query param
+			if (is_array($value))
+			{
+				foreach ($value as $op => &$val)
+				{
+					// dont check $in yet
+					if ($op == '$in')
+						continue;
+
+					// cast the special query value as reference 
+					self::parseFields( [$field=>$val] );
+				}
+			}
+			else
+			{
+				$data[$field] = $value;
+			}
+		}
+
+		// cast the simple queries in batch
+		self::parseFields($data);
+
+		$query = array_merge($query, $data);
+
+		return $query;
+	}
+
+	// ensure fields casting based on self::$fields configuration
+	public static function parseFields(&$data=null)
+	{
+		// if no data param, check the instance data attributes
+		if (is_null($data))
+			$data &= $this->attributes;
+
+		// recursively check array of rows (batch)
+		if (is_array( current($data) )) {
+			foreach ($data as &$row)
+				self::parseFields($row);
+			return true;
+		}
+
+		$class = get_called_class();
+
+		// check defined fields validation
+		foreach ($data as $field => &$value)
+		{
+			// field options defined?
+			if (!array_key_exists($field, $class::$fields))
+				continue;
+
+			$field_opt = $class::$fields[$field];
+
+			// string option means type
+			if ( is_string($field_opt) )
+				$field_opt = ['type'=>$field_opt];
+
+			// cast the field data type
+			switch ($field_opt['type']) {
+				case 'bool':
+				case 'boolean':
+					$value = (bool) $value;
+					break;
+				case 'int':
+				case 'integer':
+					$value = (int) $value;
+					break;
+				case 'float':
+				case 'double':
+				case 'real':
+					$value = (float) $value;
+					break;
+				case 'str':
+				case 'string':
+					$value = (string) $value;
+					break;
+				case 'array':
+					$value = (array) $value;
+					break;
+				case 'object':
+					$value = (object) $value;
+					break;
+				case 'date':
+					$value = new MongoDate(strtotime($value));
+				default:
+					# code...
+					break;
+			}
+
+		}
+
+		return true;
+	}
+
 }
