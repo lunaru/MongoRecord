@@ -40,10 +40,27 @@ abstract class BaseMongoRecord
 			$this->afterNew();
 	}
 
+	// start the database connection 
+	public static function start_db($host=null, $db=null, $force=false)
+	{
+		if (self::$connection && !$force)
+			return true;
+
+		if (!$host && defined('MONGO_HOST'))
+			$host = MONGO_HOST;
+		if (!$db && defined('MONGO_DB'))
+			$db = MONGO_DB;
+
+		self::$connection = new MongoClient('mongodb://'. $host);
+		self::$database = $db;
+
+		return true;
+	}
+
 	public function validate()
 	{
 		// validate fields types before running object validation
-		$this->parseFields();
+		$this->parseFields($this->attributes);
 
 		$this->beforeValidation();
 		$retval = $this->isValid();
@@ -261,6 +278,8 @@ abstract class BaseMongoRecord
 	{
 		$className = get_called_class();
 
+		self::start_db();
+		
 		if (null !== static::$collectionName)
 		{
 			$collectionName = static::$collectionName;
@@ -340,12 +359,8 @@ abstract class BaseMongoRecord
 	}
 
 	// ensure fields casting based on self::$fields configuration
-	public static function parseFields(&$data=null)
+	public static function parseFields(&$data)
 	{
-		// if no data param, check the instance data attributes
-		if (is_null($data))
-			$data &= $this->attributes;
-
 		// recursively check array of rows (batch)
 		if (is_array( current($data) )) {
 			foreach ($data as &$row)
@@ -387,9 +402,11 @@ abstract class BaseMongoRecord
 				case 'string':
 					$value = (string) $value;
 					break;
+				case 'arr':
 				case 'array':
 					$value = (array) $value;
 					break;
+				case 'obj':
 				case 'object':
 					$value = (object) $value;
 					break;
